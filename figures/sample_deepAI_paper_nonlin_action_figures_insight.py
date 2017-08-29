@@ -26,7 +26,7 @@ from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
 # Filename of stored model parameters
 filenames = ['deepAI_paper_nonlin_action_long_best_230.pkl','deepAI_paper_nonlin_action_long_best_250.pkl','deepAI_paper_nonlin_action_long_best_270.pkl']
-fig_insight = plt.figure(1,figsize=(12,12))
+fig_insight = plt.figure(1,figsize=(12,9))
 
 for i in range(len(filenames)):
 
@@ -755,8 +755,8 @@ for i in range(len(filenames)):
 	#plt.xlabel('t / Steps')
 	#plt.ylabel('$s_1$ / a.u.')
 
-fig_insight.subplots_adjust(left=0.1, bottom=0.05, right=0.95, top=0.90,
-                    wspace=0.4, hspace=0.25)
+fig_insight.subplots_adjust(left=0.1, bottom=0.1, right=0.95, top=0.90,
+                    wspace=0.4, hspace=0.4)
 fig_insight.savefig('fig_insight.pdf')
 	
 plt.show()
