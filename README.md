@@ -14,3 +14,5 @@ python plot_log_deepAI_paper.py
 
 To sample from the trained model, run
 python sample_deepAI_paper.py
+
+The scripts to directly reproduce all figures in the paper are in the ./figures/ subfolder.
