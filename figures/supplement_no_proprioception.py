@@ -629,14 +629,14 @@ r_Wa_atsig_aht, r_ba_atsig\
     aht = T.batched_tensordot(r_Wa_aht_st, T.reshape(stm1,(n_perturbations,n_s,n_proc)),axes=[[2],[1]]) + r_ba_aht
     #aht2 = T.batched_tensordot(r_Wa_aht2_aht, T.reshape(aht,(n_perturbations,n_s,n_proc)),axes=[[2],[1]]) + r_ba_aht2
     #aht3 = T.batched_tensordot(r_Wa_aht3_aht2, T.reshape(aht2,(n_perturbations,n_s,n_proc)),axes=[[2],[1]]) + r_ba_aht3
-    atm1_mu = T.batched_tensordot(r_Wa_atmu_aht, T.reshape(aht,(n_perturbations,n_s,n_proc)),axes=[[2],[1]]) + r_ba_atmu
-    atm1_sig = T.nnet.softplus( T.batched_tensordot(r_Wa_atsig_aht, T.reshape(aht,(n_perturbations,n_s,n_proc)),axes=[[2],[1]]) + r_ba_atsig ) + sig_min_action
+    at_mu = T.batched_tensordot(r_Wa_atmu_aht, T.reshape(aht,(n_perturbations,n_s,n_proc)),axes=[[2],[1]]) + r_ba_atmu
+    at_sig = T.nnet.softplus( T.batched_tensordot(r_Wa_atsig_aht, T.reshape(aht,(n_perturbations,n_s,n_proc)),axes=[[2],[1]]) + r_ba_atsig ) + sig_min_action
     
     # Sample Action
-    atm1 = atm1_mu + theano_rng.normal((n_perturbations,n_oa,n_proc))*atm1_sig
+    at = at_mu + theano_rng.normal((n_perturbations,n_oa,n_proc))*at_sig
     
     # Update Environment
-    action_force = T.tanh( atm1 )
+    action_force = T.tanh( at )
     force = T.switch(T.lt(postm1,0.0),-2*postm1 - 1,-T.pow(1+5*T.sqr(postm1),-0.5)-T.sqr(postm1)*T.pow(1 + 5*T.sqr(postm1),-1.5)-T.pow(postm1,4)/16.0) - 0.25*vtm1
     vt = vtm1 + 0.05*force + 0.03*action_force
     post = postm1 + vt     
@@ -644,7 +644,7 @@ r_Wa_atsig_aht, r_ba_atsig\
     # Generate Sensory Inputs:
     
     # 1.) Observation of Last Action
-    #oat = atm1
+    #oat = at
     
     # 2.) Noisy Observation of Current Position
     ot = post + theano_rng.normal((n_perturbations,n_o,n_proc))*0.01

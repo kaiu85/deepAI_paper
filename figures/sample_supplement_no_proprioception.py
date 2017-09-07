@@ -559,14 +559,14 @@ def inner_fn(t, stm1, postm1, vtm1):
     aht = T.dot(Wa_aht_st, T.reshape(stm1,(n_s,n_proc))) + ba_aht
     #aht2 = T.dot(Wa_aht2_aht, T.reshape(aht,(n_s,n_proc))) + ba_aht2
     #aht3 = T.dot(Wa_aht3_aht2, T.reshape(aht2,(n_s,n_proc))) + ba_aht3
-    atm1_mu = T.dot(Wa_atmu_aht, T.reshape(aht,(n_s,n_proc))) + ba_atmu
-    atm1_sig = T.nnet.softplus( T.dot(Wa_atsig_aht, T.reshape(aht,(n_s,n_proc))) + ba_atsig ) + sig_min_action
+    at_mu = T.dot(Wa_atmu_aht, T.reshape(aht,(n_s,n_proc))) + ba_atmu
+    at_sig = T.nnet.softplus( T.dot(Wa_atsig_aht, T.reshape(aht,(n_s,n_proc))) + ba_atsig ) + sig_min_action
     
     # Sample Action
-    atm1 = atm1_mu + theano_rng.normal((n_oa,n_proc))*atm1_sig
+    at = at_mu + theano_rng.normal((n_oa,n_proc))*at_sig
     
     # Update Environment
-    action_force = T.tanh( atm1 )
+    action_force = T.tanh( at )
     force = T.switch(T.lt(postm1,0.0),-2*postm1 - 1,-T.pow(1+5*T.sqr(postm1),-0.5)-T.sqr(postm1)*T.pow(1 + 5*T.sqr(postm1),-1.5)-T.pow(postm1,4)/16.0) - 0.25*vtm1
     vt = vtm1 + 0.05*force + 0.03*action_force
     post = postm1 + vt     
@@ -574,7 +574,7 @@ def inner_fn(t, stm1, postm1, vtm1):
     # Generate Sensory Inputs:
     
     # 1.) Observation of Last Action
-    #oat = atm1
+    #oat = at
     
     # 2.) Noisy Observation of Current Position
     ot = post + theano_rng.normal((n_o,n_proc))*0.01
@@ -631,7 +631,7 @@ def inner_fn(t, stm1, postm1, vtm1):
     # Put free energy functional together
     FEt =  KL_st + p_ot + p_oht
     
-    return st, post, vt, atm1, ot, oht, FEt, KL_st, stmu, stsig, force, p_ot, p_oht
+    return st, post, vt, at, ot, oht, FEt, KL_st, stmu, stsig, force, p_ot, p_oht
      
 s_t0 = theano.shared(name = 's_t0', value = numpy.zeros( (n_s, n_proc) ).astype( dtype = theano.config.floatX ), borrow = True )
 a_t0 = theano.shared(name = 'a_t0', value = numpy.zeros( (n_oa, n_proc) ).astype( dtype = theano.config.floatX ), borrow = True )
@@ -646,7 +646,7 @@ action_observations_th = T.tensor3('actions_in_th')
 state_noise_th = T.tensor3('state_noise_th')
 action_noise_th = T.tensor3('action_noise_th')
     
-((states_th, post_th, vt_th, atm1_th, ot_th, oht_th, FEt_th, KL_st_th, stmu_th, stsig_th, aht_th, p_ot_th, p_oht_th), fe_updates) =\
+((states_th, post_th, vt_th, at_th, ot_th, oht_th, FEt_th, KL_st_th, stmu_th, stsig_th, aht_th, p_ot_th, p_oht_th), fe_updates) =\
                      theano.scan(fn=inner_fn,
                      sequences = [theano.shared(numpy.arange(n_run_steps).astype(dtype = theano.config.floatX))],
                      outputs_info=[s_t0, pos_t0, v_t0, None, None, None, None, None, None, None, None, None, None])
@@ -661,7 +661,7 @@ KL_st_mean = KL_st_th.mean()
 p_ot_mean = p_ot_th.mean()
 p_oht_mean = p_oht_th.mean()
 
-run_agent_scan = theano.function(inputs = [], outputs = [states_th, atm1_th, ot_th, oht_th, FEt_th, KL_st_th, stmu_th, stsig_th, aht_th], allow_input_downcast = True, on_unused_input='ignore')
+run_agent_scan = theano.function(inputs = [], outputs = [states_th, at_th, ot_th, oht_th, FEt_th, KL_st_th, stmu_th, stsig_th, aht_th], allow_input_downcast = True, on_unused_input='ignore')
 
 #######################################################
 #
