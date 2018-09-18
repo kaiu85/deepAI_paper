@@ -10,7 +10,7 @@ plt.plot(x[:,0])
 plt.xlim([0,500])
 plt.ylim([-10,200])
 plt.xlabel('Steps')
-plt.ylabel('Free Energy')
+plt.ylabel('Free Action')
 
 ax = plt.subplot(121)
 plt.plot(x[:,0])
@@ -18,7 +18,7 @@ plt.ylim([-10,200])
 ax.axvspan(0, 500, alpha=0.3, color='red')
 plt.xlim([0,30000])
 plt.xlabel('Steps')
-plt.ylabel('Free Energy')
+plt.ylabel('Free Action')
 
 fig_convergence.subplots_adjust(left=0.07, bottom=0.1, right=0.95, top=0.95,
                     wspace=0.2, hspace=0.15)
