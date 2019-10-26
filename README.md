@@ -1,5 +1,5 @@
 deepAI
-Implementation of a Deep Active Inference agent, accompagnying the article “Deep Active Inference” (Citation as published). The code depends on Python 2.7 and Theano for tensor operations.
+Implementation of a Deep Active Inference agent, accompagnying the article “Deep Active Inference” ([Biological Cybernetics, 2018](https://link.springer.com/article/10.1007/s00422-018-0785-7); [preprint](https://arxiv.org/abs/1709.02341)). The code depends on Python 2.7 and Theano for tensor operations.
 
 To install the required components on Ubuntu, you can follow: http://deeplearning.net/software/theano/install_ubuntu.html
 
